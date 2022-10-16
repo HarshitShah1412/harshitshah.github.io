@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- import bootstrap -->
+    <link
+      rel="stylesheet"
+      href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+      integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm"
+      crossorigin="anonymous"
+    />
+    <!-- import fa icons -->
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"
+      integrity="sha512-iBBXm8fW90+nuLcSKlbmrPcLa0OT92xO1BIsZ+ywDWZCvqsWgccV3gFoRBv0z+8dLJgyAHIhR35VZc2oM/gI1w=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer" />
+    <!-- import custom css -->
+    <link rel="stylesheet" href="style.css" />
+    <title>DEP PROJECT</title>
+  </head>
+  <body>
+    <!-- Covid 19 vaccination progress website -->
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+      <div class="container-fluid">
+        <a class="navbar-brand" href="#">Covid 19 Vaccination Progress</a>
+        </div>
+      </div>
+    </nav>
+    <!-- Navbar ends -->
+    <!-- center the input date field with search button -->
+    <!-- empty height -->
+    <div class="container-fluid" style="height: 50px;"></div>
+<!-- add a horizontal line -->
+<div class="container">
+    <div class="row">
+        <!-- add break before date input -->
+        <div class="col-md-4"></div>
+        <div class="col-md-4">
+          <div class="form-group mt-5">
+              <label for="date">Enter Date</label>
+              <input
+              type="date"
+              class="form-control"
+              id="date"
+              placeholder="Enter Date"
+              />
+            </div>
+            <button type="submit" class="btn btn-primary" id="search">Add</button>
+        </div>
+        <div class="col-md-4"></div>
+    </div>
+</div>
+<!-- center the input date field with search button ends -->
+<!-- Result Table -->
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <table class="table table-striped mt-5">
+                    <thead>
+              <tr>
+                  <th scope="col"> Country </th>
+                  <th scope="col"> Total Vaccinations </th>
+                  <th scope="col"> People Vaccinated </th>
+                <th scope="col"> Daily Vaccinations </th>
+                <th scope="col"> Date </th>
+            </tr>
+        </thead>
+        <tbody id="result">
+        </tbody>
+    </table>
+</div>
+</div>
+<hr />
+<!-- center the input date field with search button -->
+    <!-- empty height -->
+    <div class="container-fluid" style="height: 50px;"></div>
+<!-- add a horizontal line -->
+<div class="container">
+    <div class="row">
+        <div class="col-md-4"></div>
+        <div class="col-md-4">
+          <div class="form-group mt-5">
+              <label for="date">Enter Month</label>
+              <input
+              type="month"
+              class="form-control"
+              id="month"
+              placeholder="Enter Month"
+              />
+            </div>
+            <button type="submit" class="btn btn-primary" id="search2">Add</button>
+        </div>
+        <div class="col-md-4"></div>
+    </div>
+</div>
+<!-- center the input date field with search button ends -->
+<!-- Result Table -->
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <table class="table table-striped mt-5">
+                    <thead>
+              <tr>
+                  <th scope="col"> Country </th>
+                  <th scope="col"> Total Vaccinations </th>
+                  <th scope="col"> People Vaccinated </th>
+                <th scope="col"> Daily Vaccinations </th>
+                <th scope="col"> Date </th>
+            </tr>
+        </thead>
+        <tbody id="result2">
+        </tbody>
+    </table>
+</div>
+</div>
+    <script>
+        // fetch 123.csv and display number of vaccinations done on a particular date into a table.
+        let date = document.getElementById("date");
+        let search = document.getElementById("search");
+        let result = document.getElementById("result");
+        search.addEventListener("click", function () {
+        //   get date value in dd-mm-yyyy format
+            let dateValue = date.value;
+            let dateArray = dateValue.split("-");
+            let dateValueFormatted = dateArray[2] + "-" + dateArray[1] + "-" + dateArray[0];
+            // convert dateValueFormatted to string
+            let dateValueFormattedString = dateValueFormatted.toString();
+          fetch("123.csv")
+            .then((res) => res.text())
+            .then((data) => {
+              let rows = data.split("\n").slice(1);
+              rows.forEach((row) => {
+                let columns = row.split(",");
+                let country = columns[0];
+                let totalVaccinations = columns[3];
+                let peopleVaccinated = columns[4];
+                let dailyVaccinations = columns[7];
+                let date = columns[2];
+                // add dustbin icon to delete row with dustbin id
+                let dustbin = `<i class="fas fa-trash-alt" id="dustbin"></i>`;
+                if(dateValueFormattedString === date){
+                    result.innerHTML += `<tr>
+                    <td>${country}</td>
+                    <td>${totalVaccinations}</td>
+                    <td>${peopleVaccinated}</td>
+                    <td>${dailyVaccinations}</td>
+                    <td>${date}</td>
+                    <td>${dustbin}</td>
+                    </tr>`;
+                }
+                // when hover on dustbin icons change to red and pointer reset to default when not hover
+                // there are multiple icons
+                try{
+                    let dustbin = document.querySelectorAll("#dustbin");
+                    dustbin.forEach((dustbin) => {
+                        dustbin.addEventListener("mouseover", function(){
+                            dustbin.style.color = "red";
+                            dustbin.style.cursor = "pointer";
+                        });
+                        dustbin.addEventListener("mouseout", function(){
+                            dustbin.style.color = "black";
+                            dustbin.style.cursor = "default";
+                        });
+                    });
+                    // on click of dustbin icon delete the row
+                    dustbin.forEach((dustbin) => {
+                        dustbin.addEventListener("click", function(){
+                            dustbin.parentElement.parentElement.remove();
+                        });
+                    });
+                }catch(err){
+                    console.log(err);
+                }
+              });
+            });
+        });
+        // when enter on date input field search button is clicked
+        date.addEventListener("keyup", function(event){
+            if(event.keyCode === 13){
+                event.preventDefault();
+                search.click();
+            }
+        });
+        // sort by table rows by date column in ascending order in every 100ms
+        try{
+            setInterval(function(){
+                let table, rows, switching, i, x, y, shouldSwitch;
+                table = document.querySelector("table");
+                switching = true;
+                while(switching){
+                    switching = false;
+                    rows = table.rows;
+                    for(i = 1; i < (rows.length - 1); i++){
+                        shouldSwitch = false;
+                        x = rows[i].getElementsByTagName("TD")[4];
+                        y = rows[i + 1].getElementsByTagName("TD")[4];
+                        if(x.innerHTML.toLowerCase() > y.innerHTML.toLowerCase()){
+                            shouldSwitch = true;
+                            break;
+                        }
+                    }
+                    if(shouldSwitch){
+                        rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
+                        switching = true;
+                    }
+                }
+            }, 100);
+        }catch(err){
+            console.log(err);
+        }
+        // fetch 123.csv and display number of vaccinations done in a particular month into a table.
+        let month = document.getElementById("month");
+        let search2 = document.getElementById("search2");
+        let result2 = document.getElementById("result2");
+        search2.addEventListener("click", function () {
+        //   get month value in yyyy-mm format
+            let monthValue = month.value;
+            let monthArray = monthValue.split("-");
+            let monthValueFormatted = monthArray[1];
+            // convert monthValueFormatted to string
+            let monthValueFormattedString = monthValueFormatted.toString();
+          fetch("123.csv")
+            .then((res) => res.text())
+            .then((data) => {
+              let rows = data.split("\n").slice(1);
+              rows.forEach((row) => {
+                let columns = row.split(",");
+                let country = columns[0];
+                let totalVaccinations = columns[3];
+                let peopleVaccinated = columns[4];
+                let dailyVaccinations = columns[7];
+                let date = columns[2];
+                // get month from date
+                let dateArray = date.split("-");
+                let dateMonth = dateArray[1];
+                // add dustbin icon to delete row with dustbin id
+                let dustbin = `<i class="fas fa-trash-alt" id="dustbin"></i>`;
+                try {
+                    if(monthValueFormattedString === dateMonth){
+                    result2.innerHTML += `<tr>
+                    <td>${country}</td>
+                    <td>${totalVaccinations}</td>
+                    <td>${peopleVaccinated}</td>
+                    <td>${dailyVaccinations}</td>
+                    <td>${date}</td>
+                    <td>${dustbin}</td>
+                    </tr>`;
+                }
+                } catch (error) {
+                    console.log(error);
+                }
+                // when hover on dustbin icons change to red and pointer reset to default when not hover
+                // there are multiple icons
+                try{
+                    let dustbin = document.querySelectorAll("#dustbin");
+                    dustbin.forEach((dustbin) => {
+                        dustbin.addEventListener("mouseover", function(){
+                            dustbin.style.color = "red";
+                            dustbin.style.cursor = "pointer";
+                        });
+                        dustbin.addEventListener("mouseout", function(){
+                            dustbin.style.color = "black";
+                            dustbin.style.cursor = "default";
+                        });
+                    });
+                    // on click of dustbin icon delete the row
+                    dustbin.forEach((dustbin) => {
+                        dustbin.addEventListener("click", function(){
+                            dustbin.parentElement.parentElement.remove();
+                        });
+                    });
+                }catch(err){
+                    console.log(err);
+                }
+              });
+            });
+        });
+        </script>
+  </body>
+</html>
